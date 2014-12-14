@@ -51,7 +51,14 @@ public class TodoListActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_todo_list);
+
+        // If User is not Logged In Start Activity Login
+        if (ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
+            ParseLoginBuilder builder = new ParseLoginBuilder(this);
+            startActivityForResult(builder.build(), LOGIN_ACTIVITY_CODE);
+        }
 
 		// Set up the views
 		todoListView = (ListView) findViewById(R.id.todo_list_view);
@@ -68,7 +75,7 @@ public class TodoListActivity extends Activity {
 				return query;
 			}
 		};
-		// Set up the adapter
+		// Set up the adapter/**/
 		inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		todoListAdapter = new ToDoListAdapter(this, factory);
@@ -161,8 +168,6 @@ public class TodoListActivity extends Activity {
 		if (item.getItemId() == R.id.action_logout) {
 			// Log out the current user
 			ParseUser.logOut();
-			// Create a new anonymous user
-			ParseAnonymousUtils.logIn(null);
 			// Update the logged in label info
 			updateLoggedInInfo();
 			// Clear the view
