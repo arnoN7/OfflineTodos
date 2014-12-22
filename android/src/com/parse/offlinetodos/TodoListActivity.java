@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -69,6 +71,25 @@ public class TodoListActivity extends Activity {
 		// Set up the Parse query to use in the adapter
 		ParseQueryAdapter.QueryFactory<Todo> factory = new ParseQueryAdapter.QueryFactory<Todo>() {
 			public ParseQuery<Todo> create() {
+                if (Todo.isEmptyTodoQuery() == true) {
+                    Todo emptyTodo = new Todo();
+                    emptyTodo.setAuthor(ParseUser.getCurrentUser());
+                    emptyTodo.setTitle("");
+                    emptyTodo.setDraft(true);
+                    emptyTodo.pinInBackground(TodoListApplication.TODO_GROUP_NAME,
+                            new SaveCallback() {
+
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e != null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "Error saving: " + e.getMessage(),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+
+                            });
+                }
 				ParseQuery<Todo> query = Todo.getQuery();
 				query.orderByDescending("createdAt");
 				query.fromLocalDatastore();
@@ -301,12 +322,60 @@ public class TodoListActivity extends Activity {
 
 		@Override
 		public View getItemView(Todo todo, View view, ViewGroup parent) {
-			ViewHolder holder;
+			final ViewHolder holder;
 			if (view == null) {
 				view = inflater.inflate(R.layout.list_item_todo, parent, false);
 				holder = new ViewHolder();
-				holder.todoTitle = (TextView) view
+                holder.todo = todo;
+				holder.todoTitle = (EditText) view
 						.findViewById(R.id.todo_title);
+                holder.buttonOK = (Button) view
+                        .findViewById(R.id.buttonSetTODO);
+                holder.buttonDelete = (Button) view
+                        .findViewById(R.id.buttonDeleteTODO);
+                holder.buttonDelete.setVisibility(View.INVISIBLE);
+                holder.buttonOK.setVisibility(View.INVISIBLE);
+                holder.buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.todo.setTitle(holder.todoTitle.getText().toString());
+                        holder.todo.setDraft(true);
+                        holder.todo.setAuthor(ParseUser.getCurrentUser());
+                        holder.todo.pinInBackground(TodoListApplication.TODO_GROUP_NAME,
+                                new SaveCallback() {
+
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if (isFinishing()) {
+                                            return;
+                                        }
+                                        if (e != null) {
+                                            Toast.makeText(getApplicationContext(),
+                                                    "Error saving: " + e.getMessage(),
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+
+                                });
+                    }
+                });
+                holder.todoTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View view, boolean isFocused) {
+
+                        if (isFocused) {
+                            Log.d("Focus", "isFocused");
+                            holder.buttonDelete.setVisibility(View.VISIBLE);
+                            holder.buttonOK.setVisibility(View.VISIBLE);
+
+                        } else
+                        {
+                            Log.d("Focus", "notFocused");
+                            holder.buttonDelete.setVisibility(View.INVISIBLE);
+                            holder.buttonOK.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
 				view.setTag(holder);
 			} else {
 				holder = (ViewHolder) view.getTag();
@@ -323,6 +392,9 @@ public class TodoListActivity extends Activity {
 	}
 
 	private static class ViewHolder {
-		TextView todoTitle;
+		EditText todoTitle;
+        Button buttonOK;
+        Button buttonDelete;
+        Todo todo;
 	}
 }
