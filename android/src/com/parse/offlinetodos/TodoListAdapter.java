@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
 
@@ -76,18 +77,20 @@ public class TodoListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup viewGroup) {
+    public View getView(final int position, View view, ViewGroup viewGroup) {
         final Holder holder;
         Todo todo = todoList.get(position);
         String todoTitle = todo.getTitle();
         EditText todoTextView;
+        Button deleteButton;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.list_item_todo, null);
             todoTextView = (EditText) view.findViewById(R.id.todo_title);
+            deleteButton = (Button) view.findViewById(R.id.buttonDeleteTODO);
             todoTextView.setTag(position);
             todoTextView.setText(todoTitle);
-            holder = new Holder(todoTextView, todo, null);
+            holder = new Holder(todoTextView, todo, null, deleteButton);
             view.setTag(holder);
         } else {
             holder = (Holder) view.getTag();
@@ -101,6 +104,14 @@ public class TodoListAdapter extends BaseAdapter {
         }
         int tag_position = (Integer) holder.todoTextView.getTag();
         holder.todoTextView.setId(tag_position);
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                todoList.get(position).deleteInBackground();
+                todoList.remove(position);
+                reloadNewImages();
+            }
+        });
 
         holder.watcher = new TextWatcher() {
             @Override
@@ -143,11 +154,13 @@ public class TodoListAdapter extends BaseAdapter {
         EditText todoTextView;
         Todo todo;
         TextWatcher watcher;
+        Button delete;
 
-        public Holder(EditText todoTextView, Todo todo, TextWatcher watcher) {
+        public Holder(EditText todoTextView, Todo todo, TextWatcher watcher, Button delete) {
             this.todo = todo;
             this.todoTextView = todoTextView;
             this.watcher = watcher;
+            this.delete = delete;
         }
     }
 }
