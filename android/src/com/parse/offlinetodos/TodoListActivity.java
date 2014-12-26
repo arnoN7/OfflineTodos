@@ -9,6 +9,8 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -36,25 +39,26 @@ import com.parse.ui.ParseLoginBuilder;
 
 public class TodoListActivity extends Activity {
 
-	private static final int LOGIN_ACTIVITY_CODE = 100;
-	private static final int EDIT_ACTIVITY_CODE = 200;
+    private static final int LOGIN_ACTIVITY_CODE = 100;
+    private static final int EDIT_ACTIVITY_CODE = 200;
 
-	// Adapter for the Todos Parse Query
-	private ParseQueryAdapter<Todo> todoListAdapter;
+    // Adapter for the Todos Parse Query
+    private TodoListAdapter todoListAdapter;
 
-	private LayoutInflater inflater;
+    // For showing empty and non-empty todo views
+    private ListView todoListView;
+    private LinearLayout noTodosView;
+    private Button buttonOk;
+    private ParseEventTaskQueue taskQueue;
 
-	// For showing empty and non-empty todo views
-	private ListView todoListView;
-	private LinearLayout noTodosView;
+    private TextView loggedInInfoView;
 
-	private TextView loggedInInfoView;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.activity_todo_list);
+        setContentView(R.layout.activity_todo_list);
+        taskQueue = new ParseEventTaskQueue();
 
         // If User is not Logged In Start Activity Login
         if (ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
@@ -62,339 +66,157 @@ public class TodoListActivity extends Activity {
             startActivityForResult(builder.build(), LOGIN_ACTIVITY_CODE);
         }
 
-		// Set up the views
-		todoListView = (ListView) findViewById(R.id.todo_list_view);
-		noTodosView = (LinearLayout) findViewById(R.id.no_todos_view);
-		todoListView.setEmptyView(noTodosView);
-		loggedInInfoView = (TextView) findViewById(R.id.loggedin_info);
+        // Set up the views
+        todoListView = (ListView) findViewById(R.id.todo_list_view);
+        noTodosView = (LinearLayout) findViewById(R.id.no_todos_view);
+        todoListView.setEmptyView(noTodosView);
+        loggedInInfoView = (TextView) findViewById(R.id.loggedin_info);
+        buttonOk = (Button) findViewById(R.id.buttonSetTODO);
+        buttonOk.setVisibility(View.INVISIBLE);
+        buttonOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                synchroniseTodos();
+            }
+        });
 
-		// Set up the Parse query to use in the adapter
-		ParseQueryAdapter.QueryFactory<Todo> factory = new ParseQueryAdapter.QueryFactory<Todo>() {
-			public ParseQuery<Todo> create() {
-                if (Todo.isEmptyTodoQuery() == true) {
-                    Todo emptyTodo = new Todo();
-                    emptyTodo.setAuthor(ParseUser.getCurrentUser());
-                    emptyTodo.setTitle("");
-                    emptyTodo.setDraft(true);
-                    emptyTodo.pinInBackground(TodoListApplication.TODO_GROUP_NAME,
-                            new SaveCallback() {
+        // Set up the Parse query to use in the adapter
+        ParseQueryAdapter.QueryFactory<Todo> factory = new ParseQueryAdapter.QueryFactory<Todo>() {
+            public ParseQuery<Todo> create() {
+                ParseQuery<Todo> query = Todo.getQuery();
+                query.orderByDescending("createdAt");
+                return query;
+            }
+        };
 
-                                @Override
-                                public void done(ParseException e) {
-                                    if (e != null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "Error saving: " + e.getMessage(),
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
+        ParseQuery<Todo> query = Todo.getQuery();
+        List<Todo> todoList = null;
+        try {
+            todoList = query.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //Add empty Todo at the end of the list
+        Todo emptyTodo = new Todo();
+        initEmptyTodo(emptyTodo);
+        todoListAdapter = new TodoListAdapter(this, R.layout.list_item_todo, todoList, buttonOk);
+        todoListAdapter.addItem(emptyTodo);
+        // Attach the query adapter to the view
+        ListView todoListView = (ListView) findViewById(R.id.todo_list_view);
+        todoListView.setAdapter(todoListAdapter);
+    }
 
-                            });
-                }
-				ParseQuery<Todo> query = Todo.getQuery();
-				query.orderByDescending("createdAt");
-				query.fromLocalDatastore();
-				return query;
-			}
-		};
-		// Set up the adapter/**/
-		inflater = (LayoutInflater) this
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		todoListAdapter = new ToDoListAdapter(this, factory);
+    private void synchroniseTodos() {
+        todoListAdapter.printTodoList();
+        boolean needToAddEmtyTodo = true;
+        List<Todo> todoList = todoListAdapter.getTodoList();
 
-		// Attach the query adapter to the view
-		ListView todoListView = (ListView) findViewById(R.id.todo_list_view);
-		todoListView.setAdapter(todoListAdapter);
+        for (int i = 0; i < todoList.size(); i++) {
+            Todo todo = todoList.get(i);
+            if (todo.getTitle().equals("")) {
+                needToAddEmtyTodo = false;
+            }
+            if (todo.isDraft() && !todo.getTitle().equals("")) {
+                todo.setDraft(false);
+                taskQueue.add(todo);
+            }
+        }
+        if(needToAddEmtyTodo) {
+            Todo newTodo = new Todo();
+            initEmptyTodo(newTodo);
+            todoListAdapter.addItem(newTodo);
+        }
+        todoListAdapter.reloadNewImages();
+    }
 
-		todoListView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Todo todo = todoListAdapter.getItem(position);
-				openEditView(todo);
-			}
-		});
-	}
+    private void initEmptyTodo(Todo newTodo) {
+        newTodo.setDraft(true);
+        newTodo.setTitle("");
+        newTodo.setAuthor(ParseUser.getCurrentUser());
+        newTodo.setUuidString();
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		// Check if we have a real user
-		if (!ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
-			// Sync data to Parse
-			syncTodosToParse();
-			// Update the logged in label info
-			updateLoggedInInfo();
-		}
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Check if we have a real user
+        if (!ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
+            // Sync data to Parse
+            //syncTodosToParse();
+            // Update the logged in label info
+            updateLoggedInInfo();
+        }
+    }
 
-	private void updateLoggedInInfo() {
-		if (!ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
-			ParseUser currentUser = ParseUser.getCurrentUser();
-			loggedInInfoView.setText(getString(R.string.logged_in,
-					currentUser.getString("name")));
-		} else {
-			loggedInInfoView.setText(getString(R.string.not_logged_in));
-		}
-	}
+    private void updateLoggedInInfo() {
+        if (!ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
+            ParseUser currentUser = ParseUser.getCurrentUser();
+            loggedInInfoView.setText(getString(R.string.logged_in,
+                    currentUser.getString("name")));
+        } else {
+            loggedInInfoView.setText(getString(R.string.not_logged_in));
+        }
+    }
 
-	private void openEditView(Todo todo) {
-		Intent i = new Intent(this, NewTodoActivity.class);
-		i.putExtra("ID", todo.getUuidString());
-		startActivityForResult(i, EDIT_ACTIVITY_CODE);
-	}
+    private void openEditView(Todo todo) {
+        Intent i = new Intent(this, NewTodoActivity.class);
+        i.putExtra("ID", todo.getUuidString());
+        startActivityForResult(i, EDIT_ACTIVITY_CODE);
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		// An OK result means the pinned dataset changed or
-		// log in was successful
-		if (resultCode == RESULT_OK) {
-			if (requestCode == EDIT_ACTIVITY_CODE) {
-				// Coming back from the edit view, update the view
-				todoListAdapter.loadObjects();
-			} else if (requestCode == LOGIN_ACTIVITY_CODE) {
-				// If the user is new, sync data to Parse,
-				// else get the current list from Parse
-				if (ParseUser.getCurrentUser().isNew()) {
-					syncTodosToParse();
-				} else {
-					loadFromParse();
-				}
-			}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
-		}
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.todo_list, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.todo_list, menu);
-		return true;
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_new) {
+            // Make sure there's a valid user, anonymous
+            // or regular
+            if (ParseUser.getCurrentUser() != null) {
+                startActivityForResult(new Intent(this, NewTodoActivity.class),
+                        EDIT_ACTIVITY_CODE);
+            }
+        }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.action_new) {
-			// Make sure there's a valid user, anonymous
-			// or regular
-			if (ParseUser.getCurrentUser() != null) {
-				startActivityForResult(new Intent(this, NewTodoActivity.class),
-						EDIT_ACTIVITY_CODE);
-			}
-		}
+        if (item.getItemId() == R.id.action_sync) {
+            //syncTodosToParse();
+        }
 
-		if (item.getItemId() == R.id.action_sync) {
-			syncTodosToParse();
-		}
+        if (item.getItemId() == R.id.action_logout) {
+            // Log out the current user
+            ParseUser.logOut();
+            // Update the logged in label info
+            updateLoggedInInfo();
+            // Clear the view
+            //todoList.clear();
+            // Unpin all the current objects
+            ParseObject
+                    .unpinAllInBackground(TodoListApplication.TODO_GROUP_NAME);
+        }
 
-		if (item.getItemId() == R.id.action_logout) {
-			// Log out the current user
-			ParseUser.logOut();
-			// Update the logged in label info
-			updateLoggedInInfo();
-			// Clear the view
-			todoListAdapter.clear();
-			// Unpin all the current objects
-			ParseObject
-					.unpinAllInBackground(TodoListApplication.TODO_GROUP_NAME);
-		}
+        if (item.getItemId() == R.id.action_login) {
+            ParseLoginBuilder builder = new ParseLoginBuilder(this);
+            startActivityForResult(builder.build(), LOGIN_ACTIVITY_CODE);
+        }
 
-		if (item.getItemId() == R.id.action_login) {
-			ParseLoginBuilder builder = new ParseLoginBuilder(this);
-			startActivityForResult(builder.build(), LOGIN_ACTIVITY_CODE);
-		}
+        return super.onOptionsItemSelected(item);
+    }
 
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		boolean realUser = !ParseAnonymousUtils.isLinked(ParseUser
-				.getCurrentUser());
-		menu.findItem(R.id.action_login).setVisible(!realUser);
-		menu.findItem(R.id.action_logout).setVisible(realUser);
-		return true;
-	}
-
-	private void syncTodosToParse() {
-		// We could use saveEventually here, but we want to have some UI
-		// around whether or not the draft has been saved to Parse
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo ni = cm.getActiveNetworkInfo();
-		if ((ni != null) && (ni.isConnected())) {
-			if (!ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
-				// If we have a network connection and a current logged in user,
-				// sync the
-				// todos
-
-				// In this app, local changes should overwrite content on the
-				// server.
-
-				ParseQuery<Todo> query = Todo.getQuery();
-				query.fromPin(TodoListApplication.TODO_GROUP_NAME);
-				query.whereEqualTo("isDraft", true);
-				query.findInBackground(new FindCallback<Todo>() {
-					public void done(List<Todo> todos, ParseException e) {
-						if (e == null) {
-							for (final Todo todo : todos) {
-								// Set is draft flag to false before
-								// syncing to Parse
-								todo.setDraft(false);
-								todo.saveInBackground(new SaveCallback() {
-
-									@Override
-									public void done(ParseException e) {
-										if (e == null) {
-											// Let adapter know to update view
-											if (!isFinishing()) {
-												todoListAdapter
-														.notifyDataSetChanged();
-											}
-										} else {
-											// Reset the is draft flag locally
-											// to true
-											todo.setDraft(true);
-										}
-									}
-
-								});
-
-							}
-						} else {
-							Log.i("TodoListActivity",
-									"syncTodosToParse: Error finding pinned todos: "
-											+ e.getMessage());
-						}
-					}
-				});
-			} else {
-				// If we have a network connection but no logged in user, direct
-				// the person to log in or sign up.
-				ParseLoginBuilder builder = new ParseLoginBuilder(this);
-				startActivityForResult(builder.build(), LOGIN_ACTIVITY_CODE);
-			}
-		} else {
-			// If there is no connection, let the user know the sync didn't
-			// happen
-			Toast.makeText(
-					getApplicationContext(),
-					"Your device appears to be offline. Some todos may not have been synced to Parse.",
-					Toast.LENGTH_LONG).show();
-		}
-
-	}
-
-	private void loadFromParse() {
-		ParseQuery<Todo> query = Todo.getQuery();
-		query.whereEqualTo("author", ParseUser.getCurrentUser());
-		query.findInBackground(new FindCallback<Todo>() {
-			public void done(List<Todo> todos, ParseException e) {
-				if (e == null) {
-					ParseObject.pinAllInBackground((List<Todo>) todos,
-							new SaveCallback() {
-								public void done(ParseException e) {
-									if (e == null) {
-										if (!isFinishing()) {
-											todoListAdapter.loadObjects();
-										}
-									} else {
-										Log.i("TodoListActivity",
-												"Error pinning todos: "
-														+ e.getMessage());
-									}
-								}
-							});
-				} else {
-					Log.i("TodoListActivity",
-							"loadFromParse: Error finding pinned todos: "
-									+ e.getMessage());
-				}
-			}
-		});
-	}
-
-	private class ToDoListAdapter extends ParseQueryAdapter<Todo> {
-
-		public ToDoListAdapter(Context context,
-				ParseQueryAdapter.QueryFactory<Todo> queryFactory) {
-			super(context, queryFactory);
-		}
-
-		@Override
-		public View getItemView(Todo todo, View view, ViewGroup parent) {
-			final ViewHolder holder;
-			if (view == null) {
-				view = inflater.inflate(R.layout.list_item_todo, parent, false);
-				holder = new ViewHolder();
-                holder.todo = todo;
-				holder.todoTitle = (EditText) view
-						.findViewById(R.id.todo_title);
-                holder.buttonOK = (Button) view
-                        .findViewById(R.id.buttonSetTODO);
-                holder.buttonDelete = (Button) view
-                        .findViewById(R.id.buttonDeleteTODO);
-                holder.buttonDelete.setVisibility(View.INVISIBLE);
-                holder.buttonOK.setVisibility(View.INVISIBLE);
-                holder.buttonOK.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        holder.todo.setTitle(holder.todoTitle.getText().toString());
-                        holder.todo.setDraft(true);
-                        holder.todo.setAuthor(ParseUser.getCurrentUser());
-                        holder.todo.pinInBackground(TodoListApplication.TODO_GROUP_NAME,
-                                new SaveCallback() {
-
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if (isFinishing()) {
-                                            return;
-                                        }
-                                        if (e != null) {
-                                            Toast.makeText(getApplicationContext(),
-                                                    "Error saving: " + e.getMessage(),
-                                                    Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-
-                                });
-                    }
-                });
-                holder.todoTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View view, boolean isFocused) {
-
-                        if (isFocused) {
-                            Log.d("Focus", "isFocused");
-                            holder.buttonDelete.setVisibility(View.VISIBLE);
-                            holder.buttonOK.setVisibility(View.VISIBLE);
-
-                        } else
-                        {
-                            Log.d("Focus", "notFocused");
-                            holder.buttonDelete.setVisibility(View.INVISIBLE);
-                            holder.buttonOK.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                });
-				view.setTag(holder);
-			} else {
-				holder = (ViewHolder) view.getTag();
-			}
-			TextView todoTitle = holder.todoTitle;
-			todoTitle.setText(todo.getTitle());
-			if (todo.isDraft()) {
-				todoTitle.setTypeface(null, Typeface.ITALIC);
-			} else {
-				todoTitle.setTypeface(null, Typeface.NORMAL);
-			}
-			return view;
-		}
-	}
-
-	private static class ViewHolder {
-		EditText todoTitle;
-        Button buttonOK;
-        Button buttonDelete;
-        Todo todo;
-	}
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        boolean realUser = !ParseAnonymousUtils.isLinked(ParseUser
+                .getCurrentUser());
+        menu.findItem(R.id.action_login).setVisible(!realUser);
+        menu.findItem(R.id.action_logout).setVisible(realUser);
+        return true;
+    }
 }

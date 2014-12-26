@@ -1,5 +1,7 @@
 package com.parse.offlinetodos;
 
+import android.util.Log;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +19,9 @@ public class Todo extends ParseObject {
 	}
 	
 	public void setTitle(String title) {
-		put("title", title);
+        String titleN = new String(title);
+        Log.d("setTitle", "Old title : " + getTitle() + " new title : " + title + " UUID : "+ getUuidString());
+		put("title", titleN);
 	}
 	
 	public ParseUser getAuthor() {

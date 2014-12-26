@@ -63,7 +63,7 @@ public class NewTodoActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				todo.setTitle(todoText.getText().toString());
+				//todo.setTitle(todoText.getText().toString());
 				todo.setDraft(true);
 				todo.setAuthor(ParseUser.getCurrentUser());
 				todo.pinInBackground(TodoListApplication.TODO_GROUP_NAME,

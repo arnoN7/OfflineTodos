@@ -14,16 +14,7 @@
         android:textStyle="bold"
         android:background="#ffff3041"
         android:layout_alignParentRight="true"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:text="OK"
-        android:id="@+id/buttonSetTODO"
-        style="@android:style/DeviceDefault.ButtonBar"
-        android:textColor="#ffffffff"
-        android:textStyle="bold"
-        android:background="#ff6fff67"
-        android:layout_toLeftOf="@id/buttonDeleteTODO"/>
+
     <EditText
             android:id="@+id/todo_title"
             android:layout_width="match_parent"
@@ -31,10 +22,5 @@
             android:fontFamily="sans-serif"
             android:textSize="20sp"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/buttonSetTODO"/>
-
-
-
-
-
+            android:layout_toLeftOf="@+id/buttonDeleteTODO"/>
 </RelativeLayout>
