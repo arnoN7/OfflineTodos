@@ -47,8 +47,8 @@ public class TodoListActivity extends Activity {
     private ImageButton mAddTodoList;
     private ArrayAdapter<String> navigationMenuAdapter;
     private RelativeLayout mLeftDrawer;
+    private String todoListName;
     List<Todo> todoList;
-
 
 
     @Override
@@ -117,11 +117,10 @@ public class TodoListActivity extends Activity {
                 public void onClick(View v) {
                     // Make sure there's a valid user, anonymous
                     // or regular
-
                     AlertDialog.Builder alert = new AlertDialog.Builder(TodoListActivity.this);
 
-                    alert.setTitle("Title");
-                    alert.setMessage("Message");
+                    alert.setTitle("Ajouter une liste");
+                    alert.setMessage("Donnez un nom à cette nouvelle liste");
 
                     // Set an EditText view to get user input
                     final EditText input = new EditText(TodoListActivity.this);
@@ -143,7 +142,6 @@ public class TodoListActivity extends Activity {
                     });
 
                     alert.show();
-
                 }
             });
 
@@ -151,10 +149,38 @@ public class TodoListActivity extends Activity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
-            if (todoLists.size()> 0) {
+            if (todoLists.size() > 0) {
                 selectItem(todoLists.get(0));
             }
         }
+    }
+
+    private void displayAlertDialog(String title, String message, DialogInterface.OnClickListener positiveButtonListener) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(TodoListActivity.this);
+
+        alert.setTitle(title);
+        alert.setMessage(message);
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(TodoListActivity.this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String newTodoList = input.getText().toString();
+                //TODO check if a todolist with the same name does not exist
+                int index = todoLists.size();
+                navigationMenuAdapter.insert(newTodoList, index);
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
     }
 
     private List<String> initTodoListNames() {
@@ -180,6 +206,7 @@ public class TodoListActivity extends Activity {
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
+        this.todoListName = todoListName;
         ft.replace(R.id.content_frame, fragment);
         ft.commit();
 
@@ -236,8 +263,32 @@ public class TodoListActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_new) {
+        if (item.getItemId() == R.id.action_share) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(TodoListActivity.this);
 
+            alert.setTitle("Partager la liste \""+todoListName+"\"");
+            alert.setMessage("e-mail de la personne à qui vous partagez la liste");
+
+            // Set an EditText view to get user input
+            final EditText input = new EditText(TodoListActivity.this);
+            alert.setView(input);
+
+            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    String newTodoList = input.getText().toString();
+                    //TODO check if a todolist with the same name does not exist
+                    int index = todoLists.size();
+                    navigationMenuAdapter.insert(newTodoList, index);
+                }
+            });
+
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // Canceled.
+                }
+            });
+
+            alert.show();
         }
 
         if (item.getItemId() == R.id.action_sync) {
@@ -277,7 +328,7 @@ public class TodoListActivity extends Activity {
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            switch (which){
+            switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
                     //Yes button clicked
                     break;
