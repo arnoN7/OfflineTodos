@@ -2,7 +2,6 @@ package com.parse.offlinetodos;
 
 import android.util.Log;
 
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;

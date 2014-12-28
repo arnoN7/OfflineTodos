@@ -26,4 +26,6 @@
     <string name="no_items">No items, click + to started adding todos.</string>
     <string name="not_logged_in">Not logged in</string>
     <string name="logged_in">Welcome, %1$s</string>
+    <string name="drawer_open">Ouvrir le menu</string>
+    <string name="drawer_close">Fermer le menu</string>
 </resources>

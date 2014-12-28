@@ -2,17 +2,23 @@ package com.parse.offlinetodos;
 
 import android.util.Log;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.List;
+import java.util.UUID;
+
 @ParseClassName("Todo")
 public class Todo extends ParseObject {
+
+    public static String AUTHOR_KEY = "author";
+    public static String IS_DRAFT_KEY = "isDraft";
+    public static String UUID_KEY = "uuid";
+    public static String TITLE_KEY = "title";
+    public static String LIST_NAME_KEY = "todoListName";
 	
 	public String getTitle() {
 		return getString("title");
@@ -70,6 +76,14 @@ public class Todo extends ParseObject {
             result = true;
         }
         return result;
+    }
+
+    public String getTodoListName() {
+        return getString("todoListName");
+    }
+
+    public void setTodoListName(String todoListName) {
+        put("todoListName", todoListName);
     }
 
 }
