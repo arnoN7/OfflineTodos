@@ -2,6 +2,7 @@ package com.parse.offlinetodos;
 
 import android.util.Log;
 
+import com.parse.ParseACL;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -19,31 +20,32 @@ public class Todo extends ParseObject {
     public static String UUID_KEY = "uuid";
     public static String TITLE_KEY = "title";
     public static String LIST_NAME_KEY = "todoListName";
+    public static String GROUP_DESCRIPTION_KEY = "groupDescription";
 	
 	public String getTitle() {
-		return getString("title");
+		return getString(TITLE_KEY);
 	}
 	
 	public void setTitle(String title) {
         String titleN = new String(title);
         Log.d("setTitle", "Old title : " + getTitle() + " new title : " + title + " UUID : "+ getUuidString());
-		put("title", titleN);
+		put(TITLE_KEY, titleN);
 	}
 	
 	public ParseUser getAuthor() {
-		return getParseUser("author");
+		return getParseUser(AUTHOR_KEY);
 	}
 	
 	public void setAuthor(ParseUser currentUser) {
-		put("author", currentUser);
+		put(AUTHOR_KEY, currentUser);
 	}
 	
 	public boolean isDraft() {
-		return getBoolean("isDraft");
+		return getBoolean(IS_DRAFT_KEY);
 	}
 	
 	public void setDraft(boolean isDraft) {
-		put("isDraft", isDraft);
+		put(IS_DRAFT_KEY, isDraft);
 	}
 	
 	public void setUuidString() {
@@ -52,38 +54,18 @@ public class Todo extends ParseObject {
 	}
 	
 	public String getUuidString() {
-		return getString("uuid");
+		return getString(UUID_KEY);
 	}
 	
 	public static ParseQuery<Todo> getQuery() {
 		return ParseQuery.getQuery(Todo.class);
 	}
-    public static boolean isEmptyTodoQuery() {
-        boolean result;
-        ParseQuery<Todo> query = ParseQuery.getQuery(Todo.class);
-        query.fromLocalDatastore();
-        query.whereEqualTo("title", "");
-        try {
-            List<Todo> emptyTODO;
-            emptyTODO = query.find();
-            if (emptyTODO.size()>0) {
-                result = false;
-            } else {
-                result = true;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            result = true;
-        }
-        return result;
-    }
 
     public String getTodoListName() {
-        return getString("todoListName");
+        return getString(LIST_NAME_KEY);
     }
 
     public void setTodoListName(String todoListName) {
-        put("todoListName", todoListName);
+        put(LIST_NAME_KEY, todoListName);
     }
-
 }

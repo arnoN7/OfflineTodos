@@ -19,7 +19,7 @@ public class ParseEvent {
     }
     public void execute (SaveCallback saveCallBack) {
         if (type == ParseTaskType.SaveInBackground) {
-            Log.d("saveInBackground", " TODO" + ((Todo) object).getTitle());
+            Log.d("saveInBackground", "Save...");
             object.saveInBackground(saveCallBack);
         }
     }

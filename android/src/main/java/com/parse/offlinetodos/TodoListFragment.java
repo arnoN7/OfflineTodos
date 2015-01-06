@@ -2,6 +2,7 @@ package com.parse.offlinetodos;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +10,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.ParseACL;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
+import com.parse.ParseRole;
 import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
 
@@ -26,16 +29,21 @@ public class TodoListFragment extends Fragment {
     // Adapter for the Todos Parse Query
     private TodoListAdapter todoListAdapter;
     public static final String TAG = "TodoListFragment";
+    public static final String ROLE_NAME_KEY = "name";
     public static final String ARG_TODO_LIST_NAME = "todo_list_name";
 
     // For showing empty and non-empty todo views
     private Button buttonOk;
     private String todoListName;
+    private ParseRole todoListRole;
 
     private TextView loggedInInfoView;
+    private String groupDescription;
+    private ParseACL groupACL;
 
     public static Fragment newInstance(String todoListName) {
         Fragment fragment = new TodoListFragment();
+        ((TodoListFragment) fragment).shareListWithUser(ParseUser.getCurrentUser().getEmail());
         Bundle args = new Bundle();
         args.putString(TodoListFragment.ARG_TODO_LIST_NAME, todoListName);
         fragment.setArguments(args);
@@ -54,7 +62,8 @@ public class TodoListFragment extends Fragment {
         super.onCreate(SavedInstanceState);
         setHasOptionsMenu(true);
         View v = inflater.inflate(R.layout.todo_list_fragment, parent, false);
-        todoListName= getArguments().getString(ARG_TODO_LIST_NAME);
+        todoListName = getArguments().getString(ARG_TODO_LIST_NAME);
+        todoListRole = initRole();
 
 
         // If User is not Logged In Start Activity Login
@@ -74,15 +83,8 @@ public class TodoListFragment extends Fragment {
             }
         });
 
-        ParseQuery<Todo> query = Todo.getQuery();
-        query.whereEqualTo(Todo.LIST_NAME_KEY, todoListName);
-        List<Todo> todoList = null;
-        try {
-            todoList = query.find();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        //Add empty Todo at the end of the list
+        List<Todo> todoList = getTodos();
+        //Add empty item at the end of the list
         Todo emptyTodo = new Todo();
         initEmptyTodo(emptyTodo);
         todoListAdapter = new TodoListAdapter(getActivity(), R.layout.list_item_todo, todoList, buttonOk);
@@ -94,8 +96,33 @@ public class TodoListFragment extends Fragment {
         return v;
     }
 
-    List<String> getTodolists () {
-        return null;
+    private ParseRole initRole() {
+        ParseRole role = null;
+        ParseQuery<ParseRole> query = ParseRole.getQuery();
+        query.whereEqualTo(ROLE_NAME_KEY, todoListName);
+        try {
+            List<ParseRole> roles = query.find();
+            if ( roles.size()> 0) {
+                role = roles.get(0);
+            } else {
+                Log.e("ERROR ROLE", "QUERY ROLE FAILED for todoList " + todoListName);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return role;
+    }
+
+    private List<Todo> getTodos() {
+        ParseQuery<Todo> query = Todo.getQuery();
+        query.whereEqualTo(Todo.LIST_NAME_KEY, todoListName);
+        List<Todo> todoList = null;
+        try {
+            todoList = query.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return todoList;
     }
 
     private void synchroniseTodos() {
@@ -110,10 +137,10 @@ public class TodoListFragment extends Fragment {
             }
             if (todo.isDraft() && !todo.getTitle().equals("")) {
                 todo.setDraft(false);
-                ((TodoListActivity)getActivity()).getTaskQueue().add(todo);
+                ((TodoListActivity) getActivity()).getTaskQueue().add(todo);
             }
         }
-        if(needToAddEmtyTodo) {
+        if (needToAddEmtyTodo) {
             Todo newTodo = new Todo();
             initEmptyTodo(newTodo);
             todoListAdapter.addItem(newTodo);
@@ -122,11 +149,16 @@ public class TodoListFragment extends Fragment {
     }
 
     private void initEmptyTodo(Todo newTodo) {
+        ParseACL todoACL = new ParseACL();
         newTodo.setDraft(true);
         newTodo.setTitle("");
         newTodo.setTodoListName(todoListName);
         newTodo.setAuthor(ParseUser.getCurrentUser());
         newTodo.setUuidString();
+        todoACL.setRoleReadAccess(todoListRole, true);
+        todoACL.setRoleWriteAccess(todoListRole, true);
+        newTodo.setACL(todoACL);
+        //newTodo.setGroupDescription(groupDescription);
     }
 
     public void updateLoggedInInfo() {
@@ -137,5 +169,30 @@ public class TodoListFragment extends Fragment {
         } else {
             loggedInInfoView.setText(getString(R.string.not_logged_in));
         }
+    }
+
+    public String getTodoListName() {
+        return todoListName;
+    }
+
+    public void shareListWithUser(String userID) {
+//        List<Todo> todoList = updateLocalInfo();
+//        Todo shareInfo = null;
+//        if (todoList.size() > 0) {
+//            shareInfo = todoList.get(0);
+//        } else {
+//            shareInfo = new Todo();
+//            initEmptyTodo(shareInfo);
+//        }
+//        groupACL = shareInfo.getACL();
+//        //groupDescription = shareInfo.getGroupDescription() + ", " + userID;
+//        groupACL.setReadAccess(userID, true);
+//        groupACL.setWriteAccess(userID, true);
+//        for (int i = 0; i < todoList.size(); i++) {
+//            Todo todo = todoList.get(i);
+//            todo.setACL(groupACL);
+//            //todo.setGroupDescription(groupDescription);
+//            ((TodoListActivity) getActivity()).getTaskQueue().add(todo);
+//        }
     }
 }

@@ -22,10 +22,12 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.parse.ParseACL;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRole;
 import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
 
@@ -47,7 +49,7 @@ public class TodoListActivity extends Activity {
     private ImageButton mAddTodoList;
     private ArrayAdapter<String> navigationMenuAdapter;
     private RelativeLayout mLeftDrawer;
-    private String todoListName;
+    private TodoListFragment currentFragment;
     List<Todo> todoList;
 
 
@@ -81,13 +83,14 @@ public class TodoListActivity extends Activity {
             navigationMenuAdapter = new ArrayAdapter<String>(this,
                     R.layout.drawer_list_item, todoLists);
             mNavigationMenu.setAdapter(navigationMenuAdapter);
-            mNavigationMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String todoListName = todoLists.get(position);
                     selectItem(todoListName);
                 }
-            });
+            };
+            mNavigationMenu.setOnItemClickListener(listener);
 
             // enable ActionBar app icon to behave as action to toggle nav drawer
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -132,6 +135,12 @@ public class TodoListActivity extends Activity {
                             //TODO check if a todolist with the same name does not exist
                             int index = todoLists.size();
                             navigationMenuAdapter.insert(newTodoList, index);
+                            ParseACL roleACL = new ParseACL();
+                            roleACL.setReadAccess(ParseUser.getCurrentUser(),true);
+                            roleACL.setWriteAccess(ParseUser.getCurrentUser(), true);
+                            ParseRole todoListRole = new ParseRole(getRoleName(newTodoList), roleACL);
+                            todoListRole.getUsers().add(ParseUser.getCurrentUser());
+                            taskQueue.add(todoListRole);
                         }
                     });
 
@@ -153,6 +162,11 @@ public class TodoListActivity extends Activity {
                 selectItem(todoLists.get(0));
             }
         }
+    }
+
+    private String getRoleName(String todoListName) {
+        //return ParseUser.getCurrentUser().getEmail().replace("@","") + todoListName.replace(" ","_");
+        return todoListName;
     }
 
     private void displayAlertDialog(String title, String message, DialogInterface.OnClickListener positiveButtonListener) {
@@ -206,7 +220,7 @@ public class TodoListActivity extends Activity {
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        this.todoListName = todoListName;
+        this.currentFragment = (TodoListFragment) fragment;
         ft.replace(R.id.content_frame, fragment);
         ft.commit();
 
@@ -266,7 +280,7 @@ public class TodoListActivity extends Activity {
         if (item.getItemId() == R.id.action_share) {
             AlertDialog.Builder alert = new AlertDialog.Builder(TodoListActivity.this);
 
-            alert.setTitle("Partager la liste \""+todoListName+"\"");
+            alert.setTitle("Partager la liste \""+currentFragment.getTodoListName()+"\"");
             alert.setMessage("e-mail de la personne à qui vous partagez la liste");
 
             // Set an EditText view to get user input
@@ -275,10 +289,8 @@ public class TodoListActivity extends Activity {
 
             alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    String newTodoList = input.getText().toString();
-                    //TODO check if a todolist with the same name does not exist
-                    int index = todoLists.size();
-                    navigationMenuAdapter.insert(newTodoList, index);
+                    String userID = input.getText().toString();
+                    currentFragment.shareListWithUser(userID);
                 }
             });
 

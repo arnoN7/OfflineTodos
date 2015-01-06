@@ -33,10 +33,6 @@ public class TodoListAdapter extends BaseAdapter {
         this.buttonOk = buttonOk;
     }
 
-    public void reloadNewImages(List<Todo> newTodoList) {
-        todoList = newTodoList;
-    }
-
     public List<Todo> getTodoList() {
         return todoList;
     }

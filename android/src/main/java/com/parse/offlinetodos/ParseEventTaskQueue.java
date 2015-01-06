@@ -23,7 +23,7 @@ public class ParseEventTaskQueue {
     public void add(ParseObject todo) {
         ParseEvent event = new ParseEvent(ParseTaskType.SaveInBackground, todo);
         eventList.add(event);
-        Log.d("Add Parse Event", "Size heap: " + eventList.size() + "Title : " + ((Todo) todo).getTitle() + "UUID : " + ((Todo) todo).getUuidString());
+        Log.d("Add Parse Event", "Size heap: " + eventList.size());
 
         //If the list only contain the element we just add
         if(eventList.size() == 1) {
