@@ -20,7 +20,6 @@ public class Todo extends ParseObject {
     public static String UUID_KEY = "uuid";
     public static String TITLE_KEY = "title";
     public static String LIST_NAME_KEY = "todoListName";
-    public static String GROUP_DESCRIPTION_KEY = "groupDescription";
 	
 	public String getTitle() {
 		return getString(TITLE_KEY);

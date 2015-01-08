@@ -36,17 +36,18 @@ public class TodoListFragment extends Fragment {
     private Button buttonOk;
     private String todoListName;
     private ParseRole todoListRole;
+    private ParseUser owner;
 
     private TextView loggedInInfoView;
     private String groupDescription;
     private ParseACL groupACL;
 
-    public static Fragment newInstance(String todoListName) {
+    public static Fragment newInstance(String todoListName, ParseUser owner) {
         Fragment fragment = new TodoListFragment();
-        ((TodoListFragment) fragment).shareListWithUser(ParseUser.getCurrentUser().getEmail());
         Bundle args = new Bundle();
         args.putString(TodoListFragment.ARG_TODO_LIST_NAME, todoListName);
         fragment.setArguments(args);
+        ((TodoListFragment) fragment).setOwner(owner);
         return fragment;
     }
 
@@ -99,7 +100,7 @@ public class TodoListFragment extends Fragment {
     private ParseRole initRole() {
         ParseRole role = null;
         ParseQuery<ParseRole> query = ParseRole.getQuery();
-        query.whereEqualTo(ROLE_NAME_KEY, todoListName);
+        query.whereEqualTo(ROLE_NAME_KEY, Utils.getRoleName(todoListName, owner ));
         try {
             List<ParseRole> roles = query.find();
             if ( roles.size()> 0) {
@@ -158,7 +159,6 @@ public class TodoListFragment extends Fragment {
         todoACL.setRoleReadAccess(todoListRole, true);
         todoACL.setRoleWriteAccess(todoListRole, true);
         newTodo.setACL(todoACL);
-        //newTodo.setGroupDescription(groupDescription);
     }
 
     public void updateLoggedInInfo() {
@@ -175,24 +175,14 @@ public class TodoListFragment extends Fragment {
         return todoListName;
     }
 
-    public void shareListWithUser(String userID) {
-//        List<Todo> todoList = updateLocalInfo();
-//        Todo shareInfo = null;
-//        if (todoList.size() > 0) {
-//            shareInfo = todoList.get(0);
-//        } else {
-//            shareInfo = new Todo();
-//            initEmptyTodo(shareInfo);
-//        }
-//        groupACL = shareInfo.getACL();
-//        //groupDescription = shareInfo.getGroupDescription() + ", " + userID;
-//        groupACL.setReadAccess(userID, true);
-//        groupACL.setWriteAccess(userID, true);
-//        for (int i = 0; i < todoList.size(); i++) {
-//            Todo todo = todoList.get(i);
-//            todo.setACL(groupACL);
-//            //todo.setGroupDescription(groupDescription);
-//            ((TodoListActivity) getActivity()).getTaskQueue().add(todo);
-//        }
+    public void shareListWithUser(ParseUser user) {
+        todoListRole.getUsers().add(user);
+        todoListRole.getACL().setReadAccess(user,true);
+        todoListRole.getACL().setWriteAccess(user,true);
+        ((TodoListActivity)getActivity()).getTaskQueue().add(todoListRole);
+    }
+
+    public void setOwner(ParseUser owner) {
+        this.owner = owner;
     }
 }

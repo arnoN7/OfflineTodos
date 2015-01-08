@@ -23,13 +23,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="281acad4-73d4-4b54-acfe-b504d9df2f7b" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoList.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/ParseEvent.java" afterPath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/ParseEvent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/ParseEventTaskQueue.java" afterPath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/ParseEventTaskQueue.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Todo.java" afterPath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Todo.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListActivity.java" afterPath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListAdapter.java" afterPath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListFragment.java" afterPath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Utils.java" afterPath="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Utils.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="OfflineTodos.iws" />
@@ -61,45 +58,54 @@
       <file leaf-file-name="TodoListActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.52590674" vertical-offset="1882" max-vertical-offset="5430">
-              <caret line="139" column="85" selection-start-line="139" selection-start-column="85" selection-end-line="139" selection-end-column="85" />
+            <state vertical-scroll-proportion="0.64248705" vertical-offset="2842" max-vertical-offset="5640">
+              <caret line="206" column="30" selection-start-line="206" selection-start-column="30" selection-end-line="206" selection-end-column="30" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3329#3638#0" expanded="true" />
-                <element signature="e#3623#3624#0" expanded="true" />
-                <element signature="e#4345#4365#0" expanded="true" />
-                <element signature="e#4438#4459#0" expanded="true" />
-                <element signature="e#5028#6992#0" expanded="true" />
-                <element signature="e#5696#6650#0" expanded="true" />
-                <element signature="e#6627#6628#0" expanded="true" />
-                <element signature="e#6708#6923#0" expanded="true" />
-                <element signature="e#6900#6901#0" expanded="true" />
-                <element signature="e#6977#6978#0" expanded="true" />
-                <element signature="e#7879#8271#0" expanded="true" />
-                <element signature="e#8260#8261#0" expanded="true" />
-                <element signature="e#8317#8484#0" expanded="true" />
-                <element signature="e#8473#8474#0" expanded="true" />
-                <element signature="e#8664#8672#0" expanded="true" />
-                <element signature="e#10155#10156#0" expanded="true" />
-                <element signature="e#10187#10188#0" expanded="true" />
-                <element signature="e#11736#12013#0" expanded="true" />
-                <element signature="e#11998#11999#0" expanded="true" />
-                <element signature="e#12063#12246#0" expanded="true" />
-                <element signature="e#12231#12232#0" expanded="true" />
-                <element signature="e#13405#13406#0" expanded="true" />
-                <element signature="e#13437#13438#0" expanded="true" />
-                <element signature="e#13498#13923#0" expanded="true" />
-                <element signature="e#13916#13917#0" expanded="true" />
+                <element signature="e#3384#3698#0" expanded="true" />
+                <element signature="e#3683#3684#0" expanded="true" />
+                <element signature="e#4405#4425#0" expanded="true" />
+                <element signature="e#4498#4519#0" expanded="true" />
+                <element signature="e#5088#7305#0" expanded="true" />
+                <element signature="e#5756#6963#0" expanded="true" />
+                <element signature="e#6940#6941#0" expanded="true" />
+                <element signature="e#7021#7236#0" expanded="true" />
+                <element signature="e#7213#7214#0" expanded="true" />
+                <element signature="e#7290#7291#0" expanded="true" />
+                <element signature="e#7990#8378#0" expanded="true" />
+                <element signature="e#8367#8368#0" expanded="true" />
+                <element signature="e#8424#8591#0" expanded="true" />
+                <element signature="e#8580#8581#0" expanded="true" />
+                <element signature="e#10054#10055#0" expanded="true" />
+                <element signature="e#10086#10087#0" expanded="true" />
+                <element signature="e#11635#12375#0" expanded="true" />
+                <element signature="e#12360#12361#0" expanded="true" />
+                <element signature="e#12425#12608#0" expanded="true" />
+                <element signature="e#12593#12594#0" expanded="true" />
+                <element signature="e#13767#13768#0" expanded="true" />
+                <element signature="e#13799#13800#0" expanded="true" />
+                <element signature="e#13860#14285#0" expanded="true" />
+                <element signature="e#14278#14279#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="todo_list.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/android/res/menu/todo_list.xml">
+      <file leaf-file-name="ArrayAdapter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../Dev/adt-bundle-mac-x86_64-20140702/sdk/sources/android-21/android/widget/ArrayAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="525">
-              <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2818" max-vertical-offset="7260">
+              <caret line="222" column="16" selection-start-line="222" selection-start-column="16" selection-end-line="222" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Utils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Utils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="390">
+              <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -120,19 +126,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630">
               <caret line="25" column="65" selection-start-line="25" selection-start-column="65" selection-end-line="25" selection-end-column="65" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="todo_list_activity.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/android/res/layout/todo_list_activity.xml">
-          <provider editor-type-id="android-designer">
-            <state />
-          </provider>
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-3.3333333" vertical-offset="15" max-vertical-offset="585">
-              <caret line="7" column="37" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -164,15 +157,17 @@
       <file leaf-file-name="TodoListFragment.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.076923" vertical-offset="847" max-vertical-offset="2745">
-              <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+            <state vertical-scroll-proportion="-5.8076925" vertical-offset="1064" max-vertical-offset="2595">
+              <caret line="102" column="79" selection-start-line="102" selection-start-column="79" selection-end-line="102" selection-end-column="79" />
               <folding>
-                <element signature="e#2683#2838#0" expanded="true" />
-                <element signature="e#2827#2828#0" expanded="true" />
-                <element signature="e#5760#5840#0" expanded="true" />
-                <element signature="e#5897#5930#0" expanded="true" />
-                <element signature="e#5986#5987#0" expanded="true" />
-                <element signature="e#6021#6022#0" expanded="true" />
+                <element signature="e#2688#2843#0" expanded="true" />
+                <element signature="e#2832#2833#0" expanded="true" />
+                <element signature="e#5735#5815#0" expanded="true" />
+                <element signature="e#5872#5905#0" expanded="true" />
+                <element signature="e#5961#5962#0" expanded="true" />
+                <element signature="e#5996#5997#0" expanded="true" />
+                <element signature="e#6332#6333#0" expanded="true" />
+                <element signature="e#6366#6367#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -191,13 +186,13 @@
       <file leaf-file-name="Todo.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Todo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="66" max-vertical-offset="795">
-              <caret line="69" column="5" selection-start-line="69" selection-start-column="5" selection-end-line="69" selection-end-column="5" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="50" max-vertical-offset="780">
+              <caret line="21" column="25" selection-start-line="21" selection-start-column="25" selection-end-line="21" selection-end-column="25" />
               <folding>
-                <element signature="e#1560#1561#0" expanded="true" />
-                <element signature="e#1607#1608#0" expanded="true" />
-                <element signature="e#1663#1664#0" expanded="true" />
-                <element signature="e#1711#1712#0" expanded="true" />
+                <element signature="e#1491#1492#0" expanded="true" />
+                <element signature="e#1538#1539#0" expanded="true" />
+                <element signature="e#1594#1595#0" expanded="true" />
+                <element signature="e#1642#1643#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -240,6 +235,7 @@
         <option value="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/ParseEventTaskQueue.java" />
         <option value="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/ParseEvent.java" />
         <option value="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Todo.java" />
+        <option value="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Utils.java" />
         <option value="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListFragment.java" />
         <option value="$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListActivity.java" />
       </list>
@@ -794,7 +790,7 @@
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32893" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41875824" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41875824" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24892704" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298969" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -999,13 +995,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
-          <caret line="10" column="23" selection-start-line="10" selection-start-column="23" selection-end-line="10" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/ParseTaskType.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="225">
@@ -1116,14 +1105,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../Dev/adt-bundle-mac-x86_64-20140702/sdk/sources/android-21/android/widget/ArrayAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334" vertical-offset="2795" max-vertical-offset="7260">
-          <caret line="222" column="16" selection-start-line="222" selection-start-column="16" selection-end-line="222" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoTextWatcher.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="270" max-vertical-offset="750">
@@ -1205,65 +1186,82 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="390">
+          <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/Todo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="66" max-vertical-offset="795">
-          <caret line="69" column="5" selection-start-line="69" selection-start-column="5" selection-end-line="69" selection-end-column="5" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="5" max-vertical-offset="780">
+          <caret line="21" column="25" selection-start-line="21" selection-start-column="25" selection-end-line="21" selection-end-column="25" />
           <folding>
-            <element signature="e#1560#1561#0" expanded="true" />
-            <element signature="e#1607#1608#0" expanded="true" />
-            <element signature="e#1663#1664#0" expanded="true" />
-            <element signature="e#1711#1712#0" expanded="true" />
+            <element signature="e#1491#1492#0" expanded="true" />
+            <element signature="e#1538#1539#0" expanded="true" />
+            <element signature="e#1594#1595#0" expanded="true" />
+            <element signature="e#1642#1643#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.076923" vertical-offset="847" max-vertical-offset="2745">
-          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+        <state vertical-scroll-proportion="-5.8076925" vertical-offset="1064" max-vertical-offset="2595">
+          <caret line="102" column="79" selection-start-line="102" selection-start-column="79" selection-end-line="102" selection-end-column="79" />
           <folding>
-            <element signature="e#2683#2838#0" expanded="true" />
-            <element signature="e#2827#2828#0" expanded="true" />
-            <element signature="e#5760#5840#0" expanded="true" />
-            <element signature="e#5897#5930#0" expanded="true" />
-            <element signature="e#5986#5987#0" expanded="true" />
-            <element signature="e#6021#6022#0" expanded="true" />
+            <element signature="e#2688#2843#0" expanded="true" />
+            <element signature="e#2832#2833#0" expanded="true" />
+            <element signature="e#5735#5815#0" expanded="true" />
+            <element signature="e#5872#5905#0" expanded="true" />
+            <element signature="e#5961#5962#0" expanded="true" />
+            <element signature="e#5996#5997#0" expanded="true" />
+            <element signature="e#6332#6333#0" expanded="true" />
+            <element signature="e#6366#6367#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Dev/adt-bundle-mac-x86_64-20140702/sdk/sources/android-21/android/widget/ArrayAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2818" max-vertical-offset="7260">
+          <caret line="222" column="16" selection-start-line="222" selection-start-column="16" selection-end-line="222" selection-end-column="16" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/com/parse/offlinetodos/TodoListActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.52590674" vertical-offset="1882" max-vertical-offset="5430">
-          <caret line="139" column="85" selection-start-line="139" selection-start-column="85" selection-end-line="139" selection-end-column="85" />
+        <state vertical-scroll-proportion="0.64248705" vertical-offset="2842" max-vertical-offset="5640">
+          <caret line="206" column="30" selection-start-line="206" selection-start-column="30" selection-end-line="206" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3329#3638#0" expanded="true" />
-            <element signature="e#3623#3624#0" expanded="true" />
-            <element signature="e#4345#4365#0" expanded="true" />
-            <element signature="e#4438#4459#0" expanded="true" />
-            <element signature="e#5028#6992#0" expanded="true" />
-            <element signature="e#5696#6650#0" expanded="true" />
-            <element signature="e#6627#6628#0" expanded="true" />
-            <element signature="e#6708#6923#0" expanded="true" />
-            <element signature="e#6900#6901#0" expanded="true" />
-            <element signature="e#6977#6978#0" expanded="true" />
-            <element signature="e#7879#8271#0" expanded="true" />
-            <element signature="e#8260#8261#0" expanded="true" />
-            <element signature="e#8317#8484#0" expanded="true" />
-            <element signature="e#8473#8474#0" expanded="true" />
-            <element signature="e#8664#8672#0" expanded="true" />
-            <element signature="e#10155#10156#0" expanded="true" />
-            <element signature="e#10187#10188#0" expanded="true" />
-            <element signature="e#11736#12013#0" expanded="true" />
-            <element signature="e#11998#11999#0" expanded="true" />
-            <element signature="e#12063#12246#0" expanded="true" />
-            <element signature="e#12231#12232#0" expanded="true" />
-            <element signature="e#13405#13406#0" expanded="true" />
-            <element signature="e#13437#13438#0" expanded="true" />
-            <element signature="e#13498#13923#0" expanded="true" />
-            <element signature="e#13916#13917#0" expanded="true" />
+            <element signature="e#3384#3698#0" expanded="true" />
+            <element signature="e#3683#3684#0" expanded="true" />
+            <element signature="e#4405#4425#0" expanded="true" />
+            <element signature="e#4498#4519#0" expanded="true" />
+            <element signature="e#5088#7305#0" expanded="true" />
+            <element signature="e#5756#6963#0" expanded="true" />
+            <element signature="e#6940#6941#0" expanded="true" />
+            <element signature="e#7021#7236#0" expanded="true" />
+            <element signature="e#7213#7214#0" expanded="true" />
+            <element signature="e#7290#7291#0" expanded="true" />
+            <element signature="e#7990#8378#0" expanded="true" />
+            <element signature="e#8367#8368#0" expanded="true" />
+            <element signature="e#8424#8591#0" expanded="true" />
+            <element signature="e#8580#8581#0" expanded="true" />
+            <element signature="e#10054#10055#0" expanded="true" />
+            <element signature="e#10086#10087#0" expanded="true" />
+            <element signature="e#11635#12375#0" expanded="true" />
+            <element signature="e#12360#12361#0" expanded="true" />
+            <element signature="e#12425#12608#0" expanded="true" />
+            <element signature="e#12593#12594#0" expanded="true" />
+            <element signature="e#13767#13768#0" expanded="true" />
+            <element signature="e#13799#13800#0" expanded="true" />
+            <element signature="e#13860#14285#0" expanded="true" />
+            <element signature="e#14278#14279#0" expanded="true" />
           </folding>
         </state>
       </provider>

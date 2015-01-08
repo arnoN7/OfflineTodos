@@ -3,6 +3,8 @@ package com.parse.offlinetodos;
 import android.graphics.Typeface;
 import android.widget.TextView;
 
+import com.parse.ParseUser;
+
 /**
  * Created by administrateur on 24/12/14.
  */
@@ -14,5 +16,8 @@ public class Utils {
         } else {
             todoTitle.setTypeface(null, Typeface.NORMAL);
         }
+    }
+    public static String getRoleName(String todoListName, ParseUser owner) {
+        return owner.getObjectId() + todoListName;
     }
 }

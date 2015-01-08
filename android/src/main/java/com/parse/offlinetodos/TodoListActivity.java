@@ -39,12 +39,13 @@ public class TodoListActivity extends Activity {
     //TodoListFragment todoListFragment;
     public static final int LOGIN_ACTIVITY_CODE = 100;
     public static final int EDIT_ACTIVITY_CODE = 200;
+    public static String EMAIL_KEY = "email";
     private ParseEventTaskQueue taskQueue;
     private DrawerLayout mDrawerLayout;
     private ListView mNavigationMenu;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private List<String> todoLists;
+    private List<ParseRole> roles;
     private ActionBarDrawerToggle mDrawerToggle;
     private ImageButton mAddTodoList;
     private ArrayAdapter<String> navigationMenuAdapter;
@@ -61,7 +62,7 @@ public class TodoListActivity extends Activity {
 
         //setContentView(R.layout.todo_list_fragment);
         taskQueue = new ParseEventTaskQueue();
-        todoLists = new ArrayList<String>();
+        roles = new ArrayList<ParseRole>();
 
         // If User is not Logged In Start Activity Login
         if (ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
@@ -75,19 +76,19 @@ public class TodoListActivity extends Activity {
             mAddTodoList = (ImageButton) findViewById(R.id.add_todo_list);
             mLeftDrawer = (RelativeLayout) findViewById(R.id.left_drawer);
             //Get TodoLists Names
-            todoLists = initTodoListNames();
+            roles = initTodoListRoles();
 
             // set a custom shadow that overlays the main content when the drawer opens
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
             // Set the adapter for the list view
             navigationMenuAdapter = new ArrayAdapter<String>(this,
-                    R.layout.drawer_list_item, todoLists);
+                    R.layout.drawer_list_item, getTodoListsNames(roles));
             mNavigationMenu.setAdapter(navigationMenuAdapter);
             AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String todoListName = todoLists.get(position);
-                    selectItem(todoListName);
+                    ParseRole currentTodoList = roles.get(position);
+                    selectItem(currentTodoList);
                 }
             };
             mNavigationMenu.setOnItemClickListener(listener);
@@ -133,13 +134,16 @@ public class TodoListActivity extends Activity {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             String newTodoList = input.getText().toString();
                             //TODO check if a todolist with the same name does not exist
-                            int index = todoLists.size();
+                            int index = roles.size();
                             navigationMenuAdapter.insert(newTodoList, index);
                             ParseACL roleACL = new ParseACL();
                             roleACL.setReadAccess(ParseUser.getCurrentUser(),true);
                             roleACL.setWriteAccess(ParseUser.getCurrentUser(), true);
-                            ParseRole todoListRole = new ParseRole(getRoleName(newTodoList), roleACL);
+                            ParseRole todoListRole = new ParseRole(Utils.getRoleName(newTodoList, ParseUser.getCurrentUser()), roleACL);
+                            todoListRole.put(Todo.LIST_NAME_KEY, newTodoList);
+                            todoListRole.put(Todo.AUTHOR_KEY, ParseUser.getCurrentUser());
                             todoListRole.getUsers().add(ParseUser.getCurrentUser());
+                            roles.add(todoListRole);
                             taskQueue.add(todoListRole);
                         }
                     });
@@ -158,15 +162,10 @@ public class TodoListActivity extends Activity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
-            if (todoLists.size() > 0) {
-                selectItem(todoLists.get(0));
+            if (roles.size() > 0) {
+                selectItem(roles.get(0));
             }
         }
-    }
-
-    private String getRoleName(String todoListName) {
-        //return ParseUser.getCurrentUser().getEmail().replace("@","") + todoListName.replace(" ","_");
-        return todoListName;
     }
 
     private void displayAlertDialog(String title, String message, DialogInterface.OnClickListener positiveButtonListener) {
@@ -183,7 +182,7 @@ public class TodoListActivity extends Activity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String newTodoList = input.getText().toString();
                 //TODO check if a todolist with the same name does not exist
-                int index = todoLists.size();
+                int index = roles.size();
                 navigationMenuAdapter.insert(newTodoList, index);
             }
         });
@@ -197,26 +196,20 @@ public class TodoListActivity extends Activity {
         alert.show();
     }
 
-    private List<String> initTodoListNames() {
-        ParseQuery<Todo> query = Todo.getQuery();
-        List<String> todoListNames = new ArrayList<String>();
+    private List<ParseRole> initTodoListRoles() {
+        ParseQuery<ParseRole> query = ParseRole.getQuery();
+        List<ParseRole> requestedRoles = null;
         try {
-            List<Todo> todos = query.find();
-            for (int i = 0; i < todos.size(); i++) {
-                if (!todoListNames.contains(todos.get(i).getTodoListName())) {
-                    String todoName = todos.get(i).getTodoListName();
-                    todoListNames.add(todoName);
-                }
-            }
+            requestedRoles = query.find();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return todoListNames;
+        return requestedRoles;
     }
 
-    private void selectItem(String todoListName) {
+    private void selectItem(ParseRole roles) {
         // update the main content by replacing fragments
-        Fragment fragment = TodoListFragment.newInstance(todoListName);
+        Fragment fragment = TodoListFragment.newInstance(roles.getString(Todo.LIST_NAME_KEY),roles.getParseUser(Todo.AUTHOR_KEY));
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -225,7 +218,7 @@ public class TodoListActivity extends Activity {
         ft.commit();
 
         // update selected item title, then close the drawer
-        setTitle(todoListName);
+        setTitle(roles.getString(Todo.LIST_NAME_KEY));
         mDrawerLayout.closeDrawer(mLeftDrawer);
     }
 
@@ -289,8 +282,20 @@ public class TodoListActivity extends Activity {
 
             alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    String userID = input.getText().toString();
-                    currentFragment.shareListWithUser(userID);
+                    String email = input.getText().toString();
+                    List<ParseUser> users = null;
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    query.whereEqualTo(EMAIL_KEY, email);
+                    try {
+                        users = query.find();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if(users.size() > 0)
+                    {
+                        currentFragment.shareListWithUser(users.get(0));
+                    }
+
                 }
             });
 
@@ -352,5 +357,14 @@ public class TodoListActivity extends Activity {
         }
     };
 
-
+    public List<String> getTodoListsNames (List<ParseRole> roles) {
+        List<String> names = null;
+        if (roles != null) {
+            names =new ArrayList<String>();
+            for (int i = 0; i < roles.size(); i++) {
+                names.add(roles.get(i).getString(Todo.LIST_NAME_KEY));
+            }
+        }
+        return names;
+    }
 }
