@@ -4,16 +4,13 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical" >
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:text="Delete"
+        android:layout_height="wrap_content"
         android:id="@+id/buttonDeleteTODO"
-        style="@android:style/DeviceDefault.ButtonBar"
-        android:textColor="#ffffffff"
-        android:textStyle="bold"
-        android:background="#ffff3041"
-        android:layout_alignParentRight="true"/>
+        android:src="@drawable/ic_action_discard"
+        android:layout_alignParentRight="true"
+        />
 
     <EditText
             android:id="@+id/todo_title"
