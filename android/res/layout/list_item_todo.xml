@@ -4,11 +4,11 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical" >
 
-    <ImageButton
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/buttonDeleteTODO"
-        android:src="@drawable/ic_action_discard"
+        android:drawable="@drawable/ic_action_discard"
         android:layout_alignParentRight="true"
         />
 
