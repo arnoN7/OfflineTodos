@@ -1,8 +1,10 @@
 <component name="libraryTable">
   <library name="libs1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/ParseUI-Android/ParseLoginUI/libs/Parse-1.5.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/ParseUI-Android/ParseLoginUI/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ParseUI-Android/ParseLoginUI/libs/bolts-android-1.1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ParseUI-Android/ParseLoginUI/libs/Parse-1.8.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ParseUI-Android/ParseLoginUI/libs/ParseCrashReporting-1.8.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

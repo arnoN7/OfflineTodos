@@ -36,18 +36,17 @@ public class TodoListFragment extends Fragment {
     private Button buttonOk;
     private String todoListName;
     private ParseRole todoListRole;
-    private ParseUser owner;
 
     private TextView loggedInInfoView;
     private String groupDescription;
     private ParseACL groupACL;
 
-    public static Fragment newInstance(String todoListName, ParseUser owner) {
+    public static Fragment newInstance(ParseRole role) {
         Fragment fragment = new TodoListFragment();
         Bundle args = new Bundle();
-        args.putString(TodoListFragment.ARG_TODO_LIST_NAME, todoListName);
+        args.putString(TodoListFragment.ARG_TODO_LIST_NAME, role.getString(Todo.LIST_NAME_KEY));
         fragment.setArguments(args);
-        ((TodoListFragment) fragment).setOwner(owner);
+        ((TodoListFragment) fragment).setTodoListRole(role);
         return fragment;
     }
 
@@ -64,7 +63,6 @@ public class TodoListFragment extends Fragment {
         setHasOptionsMenu(true);
         View v = inflater.inflate(R.layout.todo_list_fragment, parent, false);
         todoListName = getArguments().getString(ARG_TODO_LIST_NAME);
-        todoListRole = initRole();
 
 
         // If User is not Logged In Start Activity Login
@@ -95,23 +93,6 @@ public class TodoListFragment extends Fragment {
         todoListView.setAdapter(todoListAdapter);
 
         return v;
-    }
-
-    private ParseRole initRole() {
-        ParseRole role = null;
-        ParseQuery<ParseRole> query = ParseRole.getQuery();
-        query.whereEqualTo(ROLE_NAME_KEY, Utils.getRoleName(todoListName, owner ));
-        try {
-            List<ParseRole> roles = query.find();
-            if ( roles.size()> 0) {
-                role = roles.get(0);
-            } else {
-                Log.e("ERROR ROLE", "QUERY ROLE FAILED for todoList " + todoListName);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return role;
     }
 
     private List<Todo> getTodos() {
@@ -175,6 +156,10 @@ public class TodoListFragment extends Fragment {
         return todoListName;
     }
 
+    public ParseRole getTodoListRole() {
+        return todoListRole;
+    }
+
     public void shareListWithUser(ParseUser user) {
         todoListRole.getUsers().add(user);
         todoListRole.getACL().setReadAccess(user,true);
@@ -182,7 +167,7 @@ public class TodoListFragment extends Fragment {
         ((TodoListActivity)getActivity()).getTaskQueue().add(todoListRole);
     }
 
-    public void setOwner(ParseUser owner) {
-        this.owner = owner;
+    public void setTodoListRole(ParseRole todoListRole) {
+        this.todoListRole = todoListRole;
     }
 }

@@ -207,9 +207,9 @@ public class TodoListActivity extends Activity {
         return requestedRoles;
     }
 
-    private void selectItem(ParseRole roles) {
+    private void selectItem(ParseRole selectedRole) {
         // update the main content by replacing fragments
-        Fragment fragment = TodoListFragment.newInstance(roles.getString(Todo.LIST_NAME_KEY),roles.getParseUser(Todo.AUTHOR_KEY));
+        Fragment fragment = TodoListFragment.newInstance(selectedRole);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -218,7 +218,7 @@ public class TodoListActivity extends Activity {
         ft.commit();
 
         // update selected item title, then close the drawer
-        setTitle(roles.getString(Todo.LIST_NAME_KEY));
+        setTitle(selectedRole.getString(Todo.LIST_NAME_KEY));
         mDrawerLayout.closeDrawer(mLeftDrawer);
     }
 
@@ -272,9 +272,37 @@ public class TodoListActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_share) {
             AlertDialog.Builder alert = new AlertDialog.Builder(TodoListActivity.this);
+            List<ParseUser> sharedUsers = null;
+            try {
+                sharedUsers = currentFragment.getTodoListRole().getUsers().getQuery().find();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             alert.setTitle("Partager la liste \""+currentFragment.getTodoListName()+"\"");
-            alert.setMessage("e-mail de la personne à qui vous partagez la liste");
+            String message = "Vous partagez déjà la liste avec";
+            if (sharedUsers.size() == 1) {
+                message += "personne";
+            } else {
+                int nb_shares = 0;
+                for (int i = 0; i < sharedUsers.size(); i++) {
+                    //dont print current User
+                    if(!sharedUsers.get(i).equals(ParseUser.getCurrentUser())) {
+                        if(nb_shares == sharedUsers.size() - 2) {
+                            message+=" et";
+                        } else if (nb_shares != 0 ) {
+                            message += ",";
+                        }
+
+                        message += " " + sharedUsers.get(i).getUsername();
+                        nb_shares ++;
+                        if (i == sharedUsers.size()) {
+                            message += ".";
+                        }
+                    }
+                }
+            }
+            alert.setMessage(message + "\n" + "e-mail de la personne à qui vous partagez la liste");
 
             // Set an EditText view to get user input
             final EditText input = new EditText(TodoListActivity.this);
@@ -321,8 +349,10 @@ public class TodoListActivity extends Activity {
             // Clear the view
             //todoList.clear();
             // Unpin all the current objects
-            ParseObject
-                    .unpinAllInBackground(TodoListApplication.TODO_GROUP_NAME);
+            /*ParseObject
+                    .unpinAllInBackground(TodoListApplication.TODO_GROUP_NAME);*/
+            ParseLoginBuilder builder = new ParseLoginBuilder(this);
+            startActivityForResult(builder.build(), LOGIN_ACTIVITY_CODE);
         }
 
         if (item.getItemId() == R.id.action_login) {
