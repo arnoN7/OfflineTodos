@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -72,12 +73,12 @@ public class TodoListAdapter extends BaseAdapter {
         Todo todo = todoList.get(position);
         String todoTitle = todo.getTitle();
         EditText todoTextView;
-        Button deleteButton;
+        ImageButton deleteButton;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.list_item_todo, null);
             todoTextView = (EditText) view.findViewById(R.id.todo_title);
-            deleteButton = (Button) view.findViewById(R.id.buttonDeleteTODO);
+            deleteButton = (ImageButton) view.findViewById(R.id.buttonDeleteTODO);
             todoTextView.setTag(position);
             todoTextView.setText(todoTitle);
             holder = new Holder(todoTextView, todo, null, deleteButton);
@@ -144,9 +145,9 @@ public class TodoListAdapter extends BaseAdapter {
         EditText todoTextView;
         Todo todo;
         TextWatcher watcher;
-        Button delete;
+        ImageButton delete;
 
-        public Holder(EditText todoTextView, Todo todo, TextWatcher watcher, Button delete) {
+        public Holder(EditText todoTextView, Todo todo, TextWatcher watcher, ImageButton delete) {
             this.todo = todo;
             this.todoTextView = todoTextView;
             this.watcher = watcher;
