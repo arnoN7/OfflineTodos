@@ -81,6 +81,7 @@ public class TodoListFragment extends Fragment {
                 synchroniseTodos();
             }
         });
+        updateLoggedInInfo();
 
         List<Todo> todoList = getTodos();
         //Add empty item at the end of the list
