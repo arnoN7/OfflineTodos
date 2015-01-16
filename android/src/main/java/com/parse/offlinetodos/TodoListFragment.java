@@ -133,6 +133,25 @@ public class TodoListFragment extends Fragment {
         todoListAdapter.reloadNewImages();
     }
 
+    public void ifneedToAddEmptyTodo() {
+        boolean needToAddEmptyTodo = true;
+        List<Todo> todoList = todoListAdapter.getTodoList();
+        for (int i = 0; i < todoList.size(); i++) {
+
+            Todo todo = todoList.get(i);
+            if (todo.getTitle().equals("")) {
+                needToAddEmptyTodo = false;
+            }
+
+
+            if (needToAddEmptyTodo) {
+                Todo newTodo = new Todo();
+                initEmptyTodo(newTodo);
+                todoListAdapter.addItem(newTodo);
+            }
+        }
+    }
+
     public void initEmptyTodo(Todo newTodo) {
         ParseACL todoACL = new ParseACL();
         newTodo.setDraft(true);

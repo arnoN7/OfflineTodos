@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">"Nu Uita"</string>
+    <string name="todolist">TODOLIST"</string>
     <string name="action_settings">Settings</string>
     <string name="log_in">Login</string>
     <string name="signup">Sign Up</string>
@@ -29,4 +30,7 @@
     <string name="drawer_open">Ouvrir le menu</string>
     <string name="drawer_close">Fermer le menu</string>
     <string name="Save">Save</string>
+    <string name="shareWith">Vous partagez déjà la liste avec</string>
+    <string name="EmailPartageW">E-mail de la Nouvelle personne avec qui vous voulez partagez la liste</string>
+    <string name="PleaseSome">Please enter some value</string>
 </resources>

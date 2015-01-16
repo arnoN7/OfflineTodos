@@ -1,5 +1,6 @@
 package com.parse.offlinetodos;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.text.Editable;
@@ -61,13 +62,13 @@ public class TodoListAdapter extends BaseAdapter {
         return i;
     }
 
-    public void addItem (Todo newTodo) {
+    public void addItem(Todo newTodo) {
         todoList.add(newTodo);
     }
-    
+
     public void printTodoList() {
         for (int i = 0; i < todoList.size(); i++) {
-            Log.d("TODOLIST", "["+i+"] : " + todoList.get(i).getTitle() + " : " + todoList.get(i).getUuidString());
+            Log.d("TODOLIST", "[" + i + "] : " + todoList.get(i).getTitle() + " : " + todoList.get(i).getUuidString());
         }
     }
 
@@ -104,19 +105,23 @@ public class TodoListAdapter extends BaseAdapter {
             public void onClick(View view) {
                 todoList.get(position).deleteInBackground();
                 todoList.remove(position);
+                ifNeedToAddEmptyTodo();
                 reloadNewImages();
+
             }
         });
 
         holder.todoTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                // Set an action for IME_ACTION_SEND :
+                // 1) save the Todo
+                // 2) close the keyboard
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
                     //
                     holder.todo.setTitle(holder.todoTextView.getText().toString());
-                   ((TodoListActivity) context).getTaskQueue().add(holder.todo);
-                    Log.d("setOnEditorActionListener","setOnEditorActionListener");
+                    ((TodoListActivity) context).getTaskQueue().add(holder.todo);
                     InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     Todo newTodo = new Todo();
@@ -137,13 +142,14 @@ public class TodoListAdapter extends BaseAdapter {
                 final int position2 = holder.todoTextView.getId();
                 final EditText Caption = (EditText) holder.todoTextView;
                 if (Caption.getText().toString().length() > 0) {
-                   // todoList.get(position2).setTitle(Caption.getText().toString());
+                    // todoList.get(position2).setTitle(Caption.getText().toString());
                     todoList.get(position2).setDraft(true);
-                   // buttonOk.setVisibility(View.VISIBLE);
+                    // buttonOk.setVisibility(View.VISIBLE);
                     setItalicIfDraft(todoList.get(position2), Caption);
                 } else {
-                  //  buttonOk.setVisibility(View.INVISIBLE);
-                    Toast.makeText(context, "Please enter some value", Toast.LENGTH_SHORT).show();
+                    //  buttonOk.setVisibility(View.INVISIBLE);
+                    final String please = ((Activity) context).getString(R.string.PleaseSome);
+                    Toast.makeText(context, please, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -175,6 +181,34 @@ public class TodoListAdapter extends BaseAdapter {
             this.todoTextView = todoTextView;
             this.watcher = watcher;
             this.delete = delete;
+        }
+    }
+
+    public void checkIsDraft() {
+        List<Todo> todoList = getTodoList();
+        for (int i = 0; i < todoList.size(); i++) {
+
+            Todo todo = todoList.get(i);
+
+        }
+    }
+    public void ifNeedToAddEmptyTodo() {
+        // Add a new Todo is needed
+        boolean needToAddEmptyTodo = true;
+        List<Todo> todoList = getTodoList();
+        for (int i = 0; i < todoList.size(); i++) {
+
+            Todo todo = todoList.get(i);
+            if (todo.getTitle().equals("")) {
+                needToAddEmptyTodo = false;
+            }
+
+        }
+        if (needToAddEmptyTodo) {
+            Todo newTodo = new Todo();
+            ((TodoListActivity) context).getCurrentFragment().initEmptyTodo(newTodo);
+            addItem(newTodo);
+
         }
     }
 }

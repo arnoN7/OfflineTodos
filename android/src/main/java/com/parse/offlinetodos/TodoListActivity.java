@@ -283,7 +283,7 @@ public class TodoListActivity extends Activity {
             }
 
             alert.setTitle("Partager la liste \""+currentFragment.getTodoListName()+"\"");
-            String message = "Vous partagez déjà la liste avec";
+            String message = getString(R.string.shareWith);
             if (sharedUsers.size() == 1) {
                 message += "personne";
             } else {
@@ -305,11 +305,13 @@ public class TodoListActivity extends Activity {
                     }
                 }
             }
-            alert.setMessage(message + "\n" + "e-mail de la personne à qui vous partagez la liste");
+            alert.setMessage(message + "\n \n" + getString(R.string.EmailPartageW));
 
             // Set an EditText view to get user input
             final EditText input = new EditText(TodoListActivity.this);
             alert.setView(input);
+            input.setHint("Email");
+            input.setRawInputType(33);
 
             alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
