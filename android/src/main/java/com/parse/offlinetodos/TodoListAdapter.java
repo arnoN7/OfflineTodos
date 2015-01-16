@@ -5,13 +5,17 @@ import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -104,6 +108,25 @@ public class TodoListAdapter extends BaseAdapter {
             }
         });
 
+        holder.todoTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    //
+                    holder.todo.setTitle(holder.todoTextView.getText().toString());
+                   ((TodoListActivity) context).getTaskQueue().add(holder.todo);
+                    Log.d("setOnEditorActionListener","setOnEditorActionListener");
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    Todo newTodo = new Todo();
+                    initEmptyTodo(newTodo);
+                    addItem(newTodo);
+                }
+                return handled;
+            }
+        });
+
         holder.watcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -114,12 +137,12 @@ public class TodoListAdapter extends BaseAdapter {
                 final int position2 = holder.todoTextView.getId();
                 final EditText Caption = (EditText) holder.todoTextView;
                 if (Caption.getText().toString().length() > 0) {
-                    todoList.get(position2).setTitle(Caption.getText().toString());
+                   // todoList.get(position2).setTitle(Caption.getText().toString());
                     todoList.get(position2).setDraft(true);
-                    buttonOk.setVisibility(View.VISIBLE);
+                   // buttonOk.setVisibility(View.VISIBLE);
                     setItalicIfDraft(todoList.get(position2), Caption);
                 } else {
-                    buttonOk.setVisibility(View.INVISIBLE);
+                  //  buttonOk.setVisibility(View.INVISIBLE);
                     Toast.makeText(context, "Please enter some value", Toast.LENGTH_SHORT).show();
                 }
             }

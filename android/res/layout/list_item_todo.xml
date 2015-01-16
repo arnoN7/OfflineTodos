@@ -19,5 +19,8 @@
             android:fontFamily="sans-serif"
             android:textSize="20sp"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/buttonDeleteTODO"/>
+            android:layout_toLeftOf="@+id/buttonDeleteTODO"
+            android:inputType="textCapWords"
+            android:imeOptions="actionSend"
+            />
 </RelativeLayout>

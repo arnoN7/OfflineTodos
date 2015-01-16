@@ -337,7 +337,7 @@ public class TodoListActivity extends Activity {
         }
 
         if (item.getItemId() == R.id.action_sync) {
-            //syncTodosToParse();
+            currentFragment.synchroniseTodos(); 
         }
 
         if (item.getItemId() == R.id.action_logout) {

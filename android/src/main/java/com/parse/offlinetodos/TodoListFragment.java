@@ -3,9 +3,11 @@ package com.parse.offlinetodos;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -108,7 +110,7 @@ public class TodoListFragment extends Fragment {
         return todoList;
     }
 
-    private void synchroniseTodos() {
+    public void synchroniseTodos() {
         todoListAdapter.printTodoList();
         boolean needToAddEmtyTodo = true;
         List<Todo> todoList = todoListAdapter.getTodoList();
