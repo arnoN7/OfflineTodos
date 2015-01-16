@@ -53,6 +53,9 @@ public class TodoListActivity extends Activity {
     private TodoListFragment currentFragment;
     List<Todo> todoList;
 
+    public TodoListFragment getCurrentFragment(){
+        return currentFragment;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -337,7 +340,7 @@ public class TodoListActivity extends Activity {
         }
 
         if (item.getItemId() == R.id.action_sync) {
-            currentFragment.synchroniseTodos(); 
+            currentFragment.synchroniseTodos();
         }
 
         if (item.getItemId() == R.id.action_logout) {

@@ -120,7 +120,7 @@ public class TodoListAdapter extends BaseAdapter {
                     InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     Todo newTodo = new Todo();
-                    initEmptyTodo(newTodo);
+                    ((TodoListActivity) context).getCurrentFragment().initEmptyTodo(newTodo);
                     addItem(newTodo);
                 }
                 return handled;

@@ -133,7 +133,7 @@ public class TodoListFragment extends Fragment {
         todoListAdapter.reloadNewImages();
     }
 
-    private void initEmptyTodo(Todo newTodo) {
+    public void initEmptyTodo(Todo newTodo) {
         ParseACL todoACL = new ParseACL();
         newTodo.setDraft(true);
         newTodo.setTitle("");
