@@ -51,7 +51,6 @@ public class TodoListActivity extends Activity {
     private ArrayAdapter<String> navigationMenuAdapter;
     private RelativeLayout mLeftDrawer;
     private TodoListFragment currentFragment;
-    List<Todo> todoList;
 
     public TodoListFragment getCurrentFragment(){
         return currentFragment;
